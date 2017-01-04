@@ -22,14 +22,14 @@ class Trainer(object):
     self.initial_K_g = config.initial_K_g
     self.checkpoint_secs = config.checkpoint_secs
 
-    self.model = Model(config)
-    self.history_buffer = Buffer(config)
-
     DataLoader = {
         'gaze': gaze_data.DataLoader,
         'hand': hand_data.DataLoader,
     }[config.data_set]
     self.data_loader = DataLoader(config, rng=rng)
+
+    self.model = Model(config, self.data_loader)
+    self.history_buffer = Buffer(config)
 
     self.summary_ops = {}
     self.summary_placeholders = {}

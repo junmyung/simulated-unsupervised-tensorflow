@@ -17,6 +17,16 @@ def _update_dict(layer_dict, scope, layer):
   name = "{}/{}".format(tf.get_variable_scope().name, scope)
   layer_dict[name] = layer
 
+def image_from_paths(paths, shape, is_grayscale=True):
+  filename_queue = tf.train.string_input_producer(paths)
+  reader = tf.WholeFileReader()
+  filename, data = reader.read(filename_queue)
+  image = tf.image.decode_png(data, channels=3, dtype=tf.uint8)
+  if is_grayscale:
+    image = tf.image.rgb_to_grayscale(image)
+  image.set_shape(shape)
+  return tf.to_float(image)
+
 @add_arg_scope
 def resnet_block(
     inputs, scope, num_outputs=64, kernel_size=[3, 3],
